@@ -1,4 +1,4 @@
-from age_simple_sql import AGESimpleSQL, Vertex
+from age_simple_sql import AGESimpleSQL, Vertex, Edge
 
 age = AGESimpleSQL(
     host='localhost',
@@ -99,6 +99,52 @@ def drop_label_test():
     print(color_message, test_header, ': ', test_message, bcolors.ENDC)
 
 
+def vertex_creation_test():
+    test_header = 'CREATE VERTICES'
+    try:
+        # Testing without Vertex instance.
+        props = {'Title': 'The Hobbit', 'Author': 'J.R.R.Tolkien'}
+        age.create_vertex('TestLibrary', 'Book', props)
+
+        # Testing with Vertex instance.
+        lotr_book = Vertex('Book', {'Title': 'Lord of the Rings', 'Author': 'J.R.R.Tolkien'})
+        age.create_vertex('TestLibrary', lotr_book)
+        
+        # Testing without properties.
+        no_book = Vertex('Book', {})
+        age.create_vertex('TestLibrary', no_book)
+
+        test_message = 'OK'
+        color_message = bcolors.OKGREEN
+    
+    except Exception:
+        test_message = f"Couldn't create vertices correctly."
+        color_message = bcolors.FAIL
+    
+    print(color_message, test_header, ': ', test_message, bcolors.ENDC)
+
+
+def edge_creation_test():
+    test_header = 'CREATE EDGES'
+    try:
+        author = Vertex('Author', {'Name': 'Stephen King'})
+        book = Vertex('Book', {'Title': 'Life of Chuck'})
+        age.create_edge('TestLibrary', 'Wrote', {}, author, book)
+
+        book2 = Vertex('Book', {'Title': 'Elevation'})
+        edge = Edge('Wrote', {}, author, book2)
+        age.create_edge('TestLibrary', edge)
+
+        test_message = 'OK'
+        color_message = bcolors.OKGREEN
+
+    except Exception:
+        test_message = f"Couldn't create edges correctly."
+        color_message = bcolors.FAIL
+    
+    print(color_message, test_header, ': ', test_message, bcolors.ENDC)
+
+
 def execute_tests():
     try:
         print('\n============== AGESimpleSQL UNIT TESTING ==============\n')
@@ -111,14 +157,9 @@ def execute_tests():
         show_labels_test()
         show_labels_test()
 
-        props = {'Title': 'The Hobbit', 'Author': 'J.R.R.Tolkien'}
-        age.create_vertex('TestLibrary', 'Book', props)
+        vertex_creation_test()
 
-        lotr_book = Vertex('Book', {'Title': 'Lord of the Rings', 'Author': 'J.R.R.Tolkien'})
-        age.create_vertex('TestLibrary', lotr_book)
-        
-        no_book = Vertex('Book', {})
-        age.create_vertex('TestLibrary', no_book)
+        edge_creation_test()
 
         drop_label_test()
         drop_graph_test()

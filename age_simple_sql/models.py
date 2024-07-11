@@ -4,14 +4,11 @@ class Vertex:
         self.label = label
         self.properties = properties
 
-    def get_label(self):
-        return self.label
-    
-    def get_properties(self):
-        return self.properties
-    
-    def set_label(self, label:str):
-        self.label = label
+class Edge:
 
-    def set_properties(self, properties:dict):
+    def __init__(self, label:str, properties:dict, 
+                 from_vertex:Vertex, to_vertex:Vertex) -> None:
+        self.label = label
         self.properties = properties
+        self.from_vertex = from_vertex
+        self.to_vertex = to_vertex
