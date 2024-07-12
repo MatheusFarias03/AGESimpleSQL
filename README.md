@@ -38,8 +38,8 @@ Contributions are welcome! Please submit a pull request or open an issue to disc
 
 ## For more information about Apache AGE
 * Apache Age Website: https://age.apache.org/
-* Github: https://github.com/apache/incubator-age
-* Documentation: https://age.incubator.apache.org/docs/
+* Github: https://github.com/apache/age
+* Documentation: https://age.apache.org/age-manual/master/index.html
 
 ## License
 [Apache-2.0 License](https://www.apache.org/licenses/LICENSE-2.0)
