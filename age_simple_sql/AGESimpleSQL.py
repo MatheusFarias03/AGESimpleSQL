@@ -9,7 +9,6 @@ cypher queries.
 from psycopg2 import pool
 import logging
 from .models import Vertex, Edge
-from .utils import format_properties
 
 
 # bin/pg_ctl -D demo -l logfile start
@@ -136,7 +135,27 @@ class AGESimpleSQL():
         return None
     
 
+    def execute_cypher(self, graph_name:str, cypher_query:str, cypher_return:str):
+        query = f"""
+        SELECT * FROM cypher('{graph_name}', $$
+        {cypher_query}
+        $$) AS {cypher_return};
+        """
+        self.execute_query(query)
+    
+
     def setup(self):
+        """
+        Sets up the Apache AGE environment for the current database session.
+
+        This function loads the Apache AGE extension and sets the appropriate search paths.
+        It should be called immediately after initializing the AGESimpleSQL class instance 
+        to enable the execution of openCypher queries.
+
+        Usage:
+            agesql = AGESimpleSQL(connection_params)
+            agesql.setup()
+        """
         query = f"LOAD 'age';"
         self.execute_query(query)
 
@@ -242,111 +261,54 @@ class AGESimpleSQL():
 
     # Couldn't make this function work with tuples. It's good to do so because it
     # avoids SQL injections. So, maybe fix this later. 
-    def create_vertex(self, graph_name: str, label_or_vertex, properties: dict = None):
+    def create_vertex(self, graph_name: str, vertex:Vertex):
         """
         Creates a vertex in the specified graph.
 
-        This function handles two types of inputs for the label or vertex:
-        1. If `label_or_vertex` is an instance of `Vertex`, it extracts the label and properties
-        from the provided `Vertex` instance.
-        2. If `label_or_vertex` is a string, it uses the string as the label and uses the provided
-        properties dictionary.
-
         Args:
             graph_name (str): The name of the graph where the vertex will be created.
-            label_or_vertex (str or Vertex): The label of the vertex or a `Vertex` instance.
-            properties (dict, optional): A dictionary of properties for the vertex. Defaults to None.
-
+            vertex (Vertex): The `Vertex` instance.
+            
         Returns:
             None
 
         Example:
-            create_vertex('my_graph', 'Person', {'name': 'Alice', 'age': 30})
-            create_vertex('my_graph', Vertex('Person', {'name': 'Bob', 'age': 25}))
+            book = Vertex('Book', {'Title': 'Lord of the Rings', 'Author': 'J.R.R.Tolkien'})
+            create_vertex('Library', book)
         """
-
-        if isinstance(label_or_vertex, Vertex):
-            # If label_or_vertex is a Vertex instance, extract label and properties
-            # from it.
-            vertex = label_or_vertex
-            label = vertex.label
-            format_props = format_properties(vertex.properties) if bool(vertex.properties) else {}
-        
-        else:
-            # If label_or_vertex is a string, use it as the label and use provided
-            # properties.
-            label = label_or_vertex
-            format_props = format_properties(properties) if bool(properties) else {}
-
-
         query = f"""
-        SELECT * FROM cypher('{graph_name}', $$
-        CREATE (n:{label} {format_props})
-        $$) as (n agtype);
+        CREATE (n:{vertex.label} {vertex.cypher_format_props})
         """
-        self.execute_query(query)
+        cypher_return = '(n agtype)'
+        self.execute_cypher(graph_name, query, cypher_return)
         
 
-    def create_edge(self, graph_name:str, label_or_edge, properties:dict = None, 
-                    from_vertex:Vertex = None, to_vertex:Vertex = None):
+    def create_edge(self, graph_name:str, edge:Edge):
         """
         Creates an edge between two vertices in the specified graph.
 
-        This function handles two types of inputs for the label or edge:
-        1. If `label_or_edge` is an instance of `Edge`, it extracts the label, properties, and 
-        the from/to vertices from the provided `Edge` instance.
-        2. If `label_or_edge` is a string, it uses the string as the label and uses the provided
-        properties dictionary along with the provided from/to vertices.
-
         Args:
             graph_name (str): The name of the graph where the edge will be created.
-            label_or_edge (str or Edge): The label of the edge or an `Edge` instance.
-            properties (dict, optional): A dictionary of properties for the edge. Defaults to None.
-            from_vertex (Vertex, optional): The source vertex for the edge. Required if `label_or_edge` is a string.
-            to_vertex (Vertex, optional): The target vertex for the edge. Required if `label_or_edge` is a string.
+            edge (Edge): The `Edge` instance.
 
         Returns:
             None
 
         Example:
-            create_edge('my_graph', 'KNOWS', {'since': 2020}, from_vertex=Vertex('Person', {'name': 'Alice'}), to_vertex=Vertex('Person', {'name': 'Bob'}))
-            create_edge('my_graph', Edge('KNOWS', {'since': 2020}, from_vertex=Vertex('Person', {'name': 'Alice'}), to_vertex=Vertex('Person', {'name': 'Bob'})))
+            author = Vertex('Author', {'Name': 'Stephen King'})
+            book = Vertex('Book', {'Title': 'Life of Chuck'})
+            wrote = Edge('WROTE', author, book, {})
+            create_edge('Library', wrote)
         """
-        
-        if isinstance(label_or_edge, Edge):
-            # If label_or_edge is an Edge instance, extract label and properties
-            # from it.
-            e_label = label_or_edge.label
-
-            e_props = format_properties(label_or_edge.properties) if bool(label_or_edge.properties) else {}
-            f_v_props = format_properties(label_or_edge.from_vertex.properties) if bool(label_or_edge.from_vertex.properties) else {}
-            t_v_props = format_properties(label_or_edge.to_vertex.properties) if bool(label_or_edge.to_vertex.properties) else {}
-
-            f_v_label = label_or_edge.from_vertex.label
-            t_v_label = label_or_edge.to_vertex.label
-        
-        else:
-            # If label_or_edge is a string, use it as the label and use provided
-            # properties.
-            e_label = label_or_edge
-
-            e_props = format_properties(properties) if bool(properties) else {}
-            f_v_props = format_properties(from_vertex.properties) if bool(from_vertex.properties) else {}
-            t_v_props = format_properties(to_vertex.properties) if bool(to_vertex.properties) else {}
-
-            f_v_label = from_vertex.label
-            t_v_label = to_vertex.label
-
         # The MERGE clause ensures that if the specified vertices already exist, 
         # they will be reused to create the edge; if not, the vertices will be 
         # created first before the edge is created.
         query = f"""
-        SELECT * FROM cypher('{graph_name}', $$
-        MERGE (a:{f_v_label} {f_v_props})
-        MERGE (b:{t_v_label} {t_v_props})
-        CREATE (a)-[e:{e_label} {e_props}]->(b)
-        $$) as (n agtype);
+        MERGE (a:{edge.from_vertex.label} {edge.from_vertex.cypher_format_props})
+        MERGE (b:{edge.to_vertex.label} {edge.to_vertex.cypher_format_props})
+        CREATE (a)-[e:{edge.label} {edge.cypher_format_props}]->(b)
         """
-        self.execute_query(query)
+        cypher_return = '(n agtype)'
+        self.execute_cypher(graph_name, query, cypher_return)
 
 

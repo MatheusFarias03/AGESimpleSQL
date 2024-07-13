@@ -1,56 +1,50 @@
-2024-07-10 23:40:08,727 - INFO - Database connection pool created successfully
-2024-07-10 23:40:08,732 - INFO - Query executed: LOAD 'age';
-2024-07-10 23:40:08,733 - INFO - Query executed: SET search_path = ag_catalog, "$user", public;
-2024-07-10 23:40:08,733 - INFO - AGE has been set up
-2024-07-10 23:40:08,991 - INFO - Query executed: SELECT * FROM create_graph(%s);
-2024-07-10 23:40:08,991 - INFO - Graph TestLibrary has been created
-2024-07-10 23:40:08,995 - INFO - Query executed: SELECT * FROM ag_catalog.ag_graph;
-2024-07-10 23:40:08,996 - INFO - Retrieval of all graph names has been performed
-2024-07-10 23:40:09,007 - INFO - Query executed: SELECT * FROM ag_catalog.create_vlabel(%s, %s);
-2024-07-10 23:40:09,007 - INFO - Vertex label TestLibrary.Book has been created
-2024-07-10 23:40:09,008 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
-2024-07-10 23:40:09,008 - INFO - Labels have been retrieved
-2024-07-10 23:40:09,013 - INFO - Query executed: SELECT * FROM ag_catalog.create_elabel(%s, %s);
-2024-07-10 23:40:09,013 - INFO - Edge label TestLibrary.WROTE has been created
-2024-07-10 23:40:09,014 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
-2024-07-10 23:40:09,014 - INFO - Labels have been retrieved
-2024-07-10 23:40:09,015 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
-2024-07-10 23:40:09,015 - INFO - Labels have been retrieved
-2024-07-10 23:40:09,016 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
-2024-07-10 23:40:09,016 - INFO - Labels have been retrieved
-2024-07-10 23:40:09,023 - INFO - Query executed: 
-        SELECT * FROM cypher('TestLibrary', $$
+2024-07-12 22:21:28,024 - INFO - Database connection pool created successfully
+2024-07-12 22:21:28,029 - INFO - Query executed: LOAD 'age';
+2024-07-12 22:21:28,029 - INFO - Query executed: SET search_path = ag_catalog, "$user", public;
+2024-07-12 22:21:28,029 - INFO - AGE has been set up
+2024-07-12 22:21:28,213 - INFO - Query executed: SELECT * FROM create_graph(%s);
+2024-07-12 22:21:28,214 - INFO - Graph Library has been created
+2024-07-12 22:21:28,217 - INFO - Query executed: SELECT * FROM ag_catalog.ag_graph;
+2024-07-12 22:21:28,217 - INFO - Retrieval of all graph names has been performed
+2024-07-12 22:21:28,226 - INFO - Query executed: SELECT * FROM ag_catalog.create_vlabel(%s, %s);
+2024-07-12 22:21:28,226 - INFO - Vertex label Library.Book has been created
+2024-07-12 22:21:28,227 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
+2024-07-12 22:21:28,227 - INFO - Labels have been retrieved
+2024-07-12 22:21:28,231 - INFO - Query executed: SELECT * FROM ag_catalog.create_elabel(%s, %s);
+2024-07-12 22:21:28,231 - INFO - Edge label Library.WROTE has been created
+2024-07-12 22:21:28,232 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
+2024-07-12 22:21:28,232 - INFO - Labels have been retrieved
+2024-07-12 22:21:28,233 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
+2024-07-12 22:21:28,233 - INFO - Labels have been retrieved
+2024-07-12 22:21:28,234 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
+2024-07-12 22:21:28,234 - INFO - Labels have been retrieved
+2024-07-12 22:21:28,241 - INFO - Query executed: 
+        SELECT * FROM cypher('Library', $$
+        
         CREATE (n:Book {Title: "The Hobbit", Author: "J.R.R.Tolkien"})
-        $$) as (n agtype);
         
-2024-07-10 23:40:09,025 - INFO - Query executed: 
-        SELECT * FROM cypher('TestLibrary', $$
-        CREATE (n:Book {Title: "Lord of the Rings", Author: "J.R.R.Tolkien"})
-        $$) as (n agtype);
+        $$) AS (n agtype);
         
-2024-07-10 23:40:09,026 - INFO - Query executed: 
-        SELECT * FROM cypher('TestLibrary', $$
+2024-07-12 22:21:28,242 - INFO - Query executed: 
+        SELECT * FROM cypher('Library', $$
+        
         CREATE (n:Book {})
-        $$) as (n agtype);
         
-2024-07-10 23:40:09,046 - INFO - Query executed: 
-        SELECT * FROM cypher('TestLibrary', $$
+        $$) AS (n agtype);
+        
+2024-07-12 22:21:28,257 - INFO - Query executed: 
+        SELECT * FROM cypher('Library', $$
+        
         MERGE (a:Author {Name: "Stephen King"})
         MERGE (b:Book {Title: "Life of Chuck"})
         CREATE (a)-[e:Wrote {}]->(b)
-        $$) as (n agtype);
         
-2024-07-10 23:40:09,048 - INFO - Query executed: 
-        SELECT * FROM cypher('TestLibrary', $$
-        MERGE (a:Author {Name: "Stephen King"})
-        MERGE (b:Book {Title: "Elevation"})
-        CREATE (a)-[e:Wrote {}]->(b)
-        $$) as (n agtype);
+        $$) AS (n agtype);
         
-2024-07-10 23:40:09,052 - INFO - Query executed: SELECT * FROM ag_catalog.drop_label(%s, %s);
-2024-07-10 23:40:09,053 - INFO - Label TestLibrary.Book has been dropped
-2024-07-10 23:40:09,054 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
-2024-07-10 23:40:09,054 - INFO - Labels have been retrieved
-2024-07-10 23:40:09,058 - INFO - Query executed: SELECT * FROM ag_catalog.drop_graph(%s, true);
-2024-07-10 23:40:09,059 - INFO - Graph TestLibrary has been dropped
-2024-07-10 23:40:09,059 - INFO - Query executed: SELECT * FROM ag_catalog.ag_graph;
+2024-07-12 22:21:28,339 - INFO - Query executed: SELECT * FROM ag_catalog.drop_label(%s, %s);
+2024-07-12 22:21:28,339 - INFO - Label Library.Book has been dropped
+2024-07-12 22:21:28,340 - INFO - Query executed: SELECT * FROM ag_catalog.ag_label;
+2024-07-12 22:21:28,340 - INFO - Labels have been retrieved
+2024-07-12 22:21:28,346 - INFO - Query executed: SELECT * FROM ag_catalog.drop_graph(%s, true);
+2024-07-12 22:21:28,347 - INFO - Graph Library has been dropped
+2024-07-12 22:21:28,347 - INFO - Query executed: SELECT * FROM ag_catalog.ag_graph;

@@ -24,33 +24,33 @@ class bcolors:
 
 def create_graph_test():
     test_header = 'CREATE GRAPH'
-    age.create_graph('TestLibrary')
+    age.create_graph('Library')
     result = age.get_graphs()
-    if 'TestLibrary' in result:
+    if 'Library' in result:
         test_message = 'OK'
         color_message = bcolors.OKGREEN
     else: 
-        test_message = f"ERROR: expected 'TestLibrary' in graphs, but got {result}"
+        test_message = f"ERROR: expected 'Library' in graphs, but got {result}"
         color_message = bcolors.FAIL
     print(color_message, test_header, ': ', test_message, bcolors.ENDC)
 
 
 def drop_graph_test():
     test_header = 'DROP GRAPH'
-    age.drop_graph('TestLibrary')
+    age.drop_graph('Library')
     result = age.get_graphs()
-    if 'TestLibrary' not in result:
+    if 'Library' not in result:
         test_message = 'OK'
         color_message = bcolors.OKGREEN
     else:
-        test_message = f"ERROR: expected 'TestLibrary' not in graphs, but got {result}"
+        test_message = f"ERROR: expected 'Library' not in graphs, but got {result}"
         color_message = bcolors.FAIL
     print(color_message, test_header, ': ', test_message, bcolors.ENDC)
 
 
 def create_vertex_label_test():
     test_header = 'CREATE VERTEX LABEL'
-    age.create_vertex_label('TestLibrary', 'Book')
+    age.create_vertex_label('Library', 'Book')
     labels = age.get_labels()
     if 'Book' in labels:
         test_message = 'OK'
@@ -63,7 +63,7 @@ def create_vertex_label_test():
 
 def create_edge_label_test():
     test_header = 'CREATE EDGE LABEL'
-    age.create_edge_label('TestLibrary', 'WROTE')
+    age.create_edge_label('Library', 'WROTE')
     labels = age.get_labels()
     if 'WROTE' in labels:
         test_message = 'OK'
@@ -88,7 +88,7 @@ def show_labels_test():
 
 def drop_label_test():
     test_header = 'DROP LABEL'
-    age.drop_label('TestLibrary', 'Book')
+    age.drop_label('Library', 'Book')
     labels = age.get_labels()
     if 'Book' not in labels:
         test_message = 'OK'
@@ -103,16 +103,12 @@ def vertex_creation_test():
     test_header = 'CREATE VERTICES'
     try:
         # Testing without Vertex instance.
-        props = {'Title': 'The Hobbit', 'Author': 'J.R.R.Tolkien'}
-        age.create_vertex('TestLibrary', 'Book', props)
-
-        # Testing with Vertex instance.
-        lotr_book = Vertex('Book', {'Title': 'Lord of the Rings', 'Author': 'J.R.R.Tolkien'})
-        age.create_vertex('TestLibrary', lotr_book)
+        hobbit = Vertex('Book', {'Title': 'The Hobbit', 'Author': 'J.R.R.Tolkien'})
+        age.create_vertex('Library', hobbit)
         
         # Testing without properties.
         no_book = Vertex('Book', {})
-        age.create_vertex('TestLibrary', no_book)
+        age.create_vertex('Library', no_book)
 
         test_message = 'OK'
         color_message = bcolors.OKGREEN
@@ -129,11 +125,8 @@ def edge_creation_test():
     try:
         author = Vertex('Author', {'Name': 'Stephen King'})
         book = Vertex('Book', {'Title': 'Life of Chuck'})
-        age.create_edge('TestLibrary', 'Wrote', {}, author, book)
-
-        book2 = Vertex('Book', {'Title': 'Elevation'})
-        edge = Edge('Wrote', {}, author, book2)
-        age.create_edge('TestLibrary', edge)
+        edge = Edge('Wrote', author, book, {})
+        age.create_edge('Library', edge)
 
         test_message = 'OK'
         color_message = bcolors.OKGREEN

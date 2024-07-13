@@ -25,9 +25,12 @@ db.setup()
 # Example usage
 db.create_graph("TestGraph")
 db.create_vertex_label("TestGraph", "Book")
-properties = {"Title": "The Hobbit", "Author": "J.R.R.Tolkien"}
-vertex = Vertex(label="Book", properties=properties)
+book = Vertex(label="Book", properties={"Title": "The Hobbit"})
 db.create_vertex("TestGraph", vertex)
+
+author = Vertex(label="Author", properties={"Name": "J.R.R.Tolkien"})
+wrote = Edge(label="WROTE", from_vertex=author, to_vertex=book)
+db.create_edge("TestGraph", wrote)
 ```
 
 ## Testing
