@@ -135,13 +135,28 @@ class AGESimpleSQL():
         return None
     
 
-    def execute_cypher(self, graph_name:str, cypher_query:str, cypher_return:str):
+    def execute_cypher(self, graph_name:str, cypher_query:str, cypher_return:str, fetch:bool = False):
+        """
+        Executes a Cypher query on the specified graph within the PostgreSQL database using the Apache AGE extension.
+
+        Args:
+            graph_name (str): The name of the graph on which the Cypher query is to be executed.
+            cypher_query (str): The Cypher query to be executed.
+            cypher_return (str): The return clause for the Cypher query, defining the structure of the result.
+            fetch (bool, optional): If True, fetches and returns the result of the query. If False, only executes the query without fetching the result. Default is False.
+
+        Returns:
+            executed_query (list or None): If `fetch` is True, returns the result of the executed query as a list. If `fetch` is False, returns None.
+        """
         query = f"""
         SELECT * FROM cypher('{graph_name}', $$
         {cypher_query}
         $$) AS {cypher_return};
         """
-        self.execute_query(query)
+        executed_query = self.execute_query(query, fetch=fetch)
+
+        if fetch:
+            return executed_query
     
 
     def setup(self):

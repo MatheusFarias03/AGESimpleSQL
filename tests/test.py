@@ -138,6 +138,38 @@ def edge_creation_test():
     print(color_message, test_header, ': ', test_message, bcolors.ENDC)
 
 
+def vertex_fetch_test():
+    test_header = 'FETCH VERTEX'
+    try:
+        book = Vertex('Book', {'Title':'The DevOps Handbook'})
+        age.create_vertex('Library', book)
+
+        query = f"""
+        MATCH (v)
+        WHERE v.Title =~ '{book.properties['Title']}'
+        RETURN v
+        """
+        cypher_return = '(n agtype)'
+        vertices = age.execute_cypher('Library', query, cypher_return, True)
+        found_books_data = []
+        for vertex in vertices:
+            vertex_data = vertex[0][:-8]
+            found_books_data.append(vertex_data)
+
+        if 'The DevOps Handbook' not in found_books_data:
+            test_message = f"Couldn't fetch the vertex correctly."
+            color_message = bcolors.FAIL
+
+        test_message = 'OK'
+        color_message = bcolors.OKGREEN
+
+    except Exception:
+        test_message = f"Couldn't fetch the vertex correctly."
+        color_message = bcolors.FAIL
+
+    print(color_message, test_header, ': ', test_message, bcolors.ENDC)
+
+
 def execute_tests():
     try:
         print('\n============== AGESimpleSQL UNIT TESTING ==============\n')
@@ -151,6 +183,7 @@ def execute_tests():
         show_labels_test()
 
         vertex_creation_test()
+        vertex_fetch_test()
 
         edge_creation_test()
 
