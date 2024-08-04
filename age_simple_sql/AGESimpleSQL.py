@@ -174,7 +174,7 @@ class AGESimpleSQL():
         query = f"LOAD 'age';"
         self.execute_query(query)
 
-        query = f"SET search_path = ag_catalog, \"$user\", public;"
+        query = f"SET search_path TO ag_catalog;"
         self.execute_query(query)
         logging.info(f'AGE has been set up')
 
