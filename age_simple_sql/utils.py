@@ -9,8 +9,11 @@ def format_properties(v_properties:dict) -> str:
     '''
     prop = '{'
     for k, v in v_properties.items():
-        v = v.replace("\"", "'")
-        prop += f'{k}: "{v}", ' 
+        if isinstance(v, str):
+            v = v.replace("\"", "'")
+            prop += f'{k}: "{v}", '
+        else:
+            prop += f'{k}: {v}, '
     prop = prop[:-2] # Remove the last comma.
     prop += '}'
     return prop

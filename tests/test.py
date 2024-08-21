@@ -103,7 +103,7 @@ def vertex_creation_test():
     test_header = 'CREATE VERTICES'
     try:
         # Testing without Vertex instance.
-        hobbit = Vertex('Book', {'Title': 'The Hobbit', 'Author': 'J.R.R.Tolkien'})
+        hobbit = Vertex('Book', {'Title': 'The Hobbit', 'Author': 'J.R.R.Tolkien', 'Pages':300})
         age.create_vertex('Library', hobbit)
         
         # Testing without properties.
